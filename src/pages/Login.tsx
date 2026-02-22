@@ -15,7 +15,7 @@ const Login = () => {
     },
   });
 
-  const [login, { error }] = useLoginMutation();
+  const [login] = useLoginMutation();
 
   const onSubmit = async (data: FieldValues) => {
     const userInfo = {
