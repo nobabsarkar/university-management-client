@@ -6,6 +6,7 @@ import { setUser, TUser } from "../redux/features/auth/authSlice";
 import { verifyToken } from "../utils/verifyToken";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import PHForm from "../components/form/PHForm";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,28 +22,29 @@ const Login = () => {
   const [login] = useLoginMutation();
 
   const onSubmit = async (data: FieldValues) => {
-    const toastId = toast.loading("Looging in");
+    console.log(data);
+    // const toastId = toast.loading("Looging in");
 
-    try {
-      const userInfo = {
-        id: data?.id,
-        password: data?.password,
-      };
+    // try {
+    //   const userInfo = {
+    //     id: data?.id,
+    //     password: data?.password,
+    //   };
 
-      const res = await login(userInfo).unwrap();
+    //   const res = await login(userInfo).unwrap();
 
-      const user = verifyToken(res?.data?.accessToken) as TUser;
+    //   const user = verifyToken(res?.data?.accessToken) as TUser;
 
-      dispatch(setUser({ user: user, token: res?.data?.accessToken }));
-      toast.success("Logged in", { id: toastId, duration: 2000 });
-      navigate(`/${user?.role}/dashboard`);
-    } catch (error) {
-      toast.error("Something went wrong", { id: toastId, duration: 2000 });
-    }
+    //   dispatch(setUser({ user: user, token: res?.data?.accessToken }));
+    //   toast.success("Logged in", { id: toastId, duration: 2000 });
+    //   navigate(`/${user?.role}/dashboard`);
+    // } catch (error) {
+    //   toast.error("Something went wrong", { id: toastId, duration: 2000 });
+    // }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <PHForm onSubmit={onSubmit}>
       <div>
         <label htmlFor="id">ID:</label>
         <input type="text" id="id" {...register("id")} />
@@ -52,7 +54,7 @@ const Login = () => {
         <input type="text" id="password" {...register("password")} />
       </div>
       <Button htmlType="submit">Login</Button>
-    </form>
+    </PHForm>
   );
 };
 

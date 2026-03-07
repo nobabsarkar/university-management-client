@@ -1,4 +1,10 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
+import {
+  BaseQueryApi,
+  BaseQueryFn,
+  DefinitionType,
+  FetchArgs,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 import { logOut, setUser } from "../features/auth/authSlice";
@@ -20,11 +26,13 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-const BaseQueryWithRefreshToken = async (args, api, extraOptions) => {
+// this function means if access token is expire working with refresh token
+const BaseQueryWithRefreshToken: BaseQueryFn<
+  FetchArgs,
+  BaseQueryApi,
+  DefinitionType
+> = async (args, api, extraOptions): Promise<any> => {
   let result = await baseQuery(args, api, extraOptions);
-
-  console.log(result);
-  console.log("Sending refresh token");
 
   if (result?.error?.status === 401) {
     const res = await fetch("http://localhost:5000/api/v1/auth/refresh-token", {
@@ -34,6 +42,7 @@ const BaseQueryWithRefreshToken = async (args, api, extraOptions) => {
 
     const data = await res.json();
 
+    // if refresh token is expire user is logout
     if (data?.data?.accessToken) {
       const user = (api.getState() as RootState)?.auth?.user;
 
