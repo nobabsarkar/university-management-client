@@ -5,7 +5,10 @@ import PHSelect from "../../../components/form/PHSelect";
 import { semesterOptions } from "../../../constants/semester";
 import { monthOptions } from "../../../constants/global";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
+import { academicSemesterSchema } from "../../../Schemas/academicManagement.schema";
+import { useAddAcademicSemesterMutation } from "../../../redux/features/admin/academicManagement.api";
+import { toast } from "sonner";
+import { TResponse } from "../../../types/global";
 
 const nameOptions = [
   {
@@ -29,7 +32,11 @@ const yearOptions = [0, 1, 2, 3, 4].map((number) => ({
 }));
 
 const CreateAcademicSemester = () => {
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  const [addAcademicSemester] = useAddAcademicSemesterMutation();
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const toastId = toast.loading("Creating...");
+
     const name = nameOptions[Number(data?.name) - 1]?.label;
 
     const semesterData = {
@@ -39,15 +46,27 @@ const CreateAcademicSemester = () => {
       startMonth: data?.startMonth,
       endMonth: data?.endMonth,
     };
-    console.log(semesterData);
-  };
 
-  const academicSemesterSchema = z.object({
-    name: z.string("Please select a Name"),
-    year: z.string("Please select a Year"),
-    startMonth: z.string("Please select a StartMonth"),
-    endMonth: z.string("Please select a EndMonth"),
-  });
+    try {
+      console.log(semesterData);
+      const res = (await addAcademicSemester(semesterData)) as TResponse;
+
+      if (res.error) {
+        toast.error(res.error.data.message, {
+          id: toastId,
+        });
+      } else {
+        toast.success("Semester Created Successfully", {
+          id: toastId,
+        });
+      }
+      console.log(res);
+    } catch (error) {
+      toast.error("Something went wrong", {
+        id: toastId,
+      });
+    }
+  };
 
   return (
     <Flex justify="center" align="center">
