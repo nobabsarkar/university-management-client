@@ -27,6 +27,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: routeGenerator(studentPaths),
   },
+
   {
     path: "/login",
     element: <Login />,
