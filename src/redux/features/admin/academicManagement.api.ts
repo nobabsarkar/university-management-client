@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TAcademicSemester } from "../../../types/academicManagement.type";
 import { TResponseRedux } from "../../../types/global";
 import { baseApi } from "../../api/baseApi";
@@ -8,7 +9,11 @@ const academicManagementApi = baseApi.injectEndpoints({
       query: (args) => {
         const params = new URLSearchParams();
 
-        params.append(args[0]?.name, args[0]?.value);
+        if (args) {
+          args?.forEach((item: any) => {
+            params.append(item?.name, item?.value);
+          });
+        }
 
         return {
           url: "/academic-semesters",
