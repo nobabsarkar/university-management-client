@@ -48,7 +48,6 @@ const CreateAcademicSemester = () => {
     };
 
     try {
-      console.log(semesterData);
       const res = (await addAcademicSemester(semesterData)) as TResponseData;
 
       if (res.error) {
@@ -60,7 +59,6 @@ const CreateAcademicSemester = () => {
           id: toastId,
         });
       }
-      console.log(res);
     } catch (error) {
       toast.error("Something went wrong", {
         id: toastId,
