@@ -5,7 +5,11 @@ import { Button, Col, Divider, Row } from "antd";
 import PHSelect from "../../../components/form/PHSelect";
 import { bloodGroupOptions, genderOptions } from "../../../constants/global";
 import PHDatePicker from "../../../components/form/PHDatePicker";
-import { useGetAllSemestersQuery } from "../../../redux/features/admin/academicManagement.api";
+import {
+  useGetAcademicDepartmentsQuery,
+  useGetAllSemestersQuery,
+} from "../../../redux/features/admin/academicManagement.api";
+import { useAddStudentMutation } from "../../../redux/features/admin/userManagement.api";
 
 // const studentDummyData = {
 //   password: "student123",
@@ -47,6 +51,10 @@ import { useGetAllSemestersQuery } from "../../../redux/features/admin/academicM
 // };
 
 const CreateStudent = () => {
+  const [addStudent, { data, error }] = useAddStudentMutation();
+
+  console.log({ data, error });
+
   const { data: sData, isLoading: sIsLoading } =
     useGetAllSemestersQuery(undefined);
 
@@ -55,14 +63,29 @@ const CreateStudent = () => {
     label: `${item?.name} ${item?.year}`,
   }));
 
+  const { data: dData, isLoading: dIsLoading } = useGetAcademicDepartmentsQuery(
+    undefined,
+    { skip: sIsLoading },
+  );
+
+  const departmentOptions = dData?.data?.map((item) => ({
+    value: item?._id,
+    label: item?.name,
+  }));
+
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+    const studentData = {
+      password: "student123",
+      student: data,
+    };
 
-    // const formData = new FormData();
+    const formData = new FormData();
 
-    // formData.append("data", JSON.stringify(data));
+    formData.append("data", JSON.stringify(studentData));
 
-    // console.log(Object.fromEntries(formData));
+    addStudent(formData);
+
+    console.log(Object.fromEntries(formData));
   };
 
   // this is only for development
@@ -77,8 +100,8 @@ const CreateStudent = () => {
     // dateOfBirth: "2001-05-12",
     bloodGroup: "O+",
 
-    email: "student1@gmail.com",
-    contactNo: "0170975830145",
+    // email: "student1@gmail.com",
+    // contactNo: "0170975830145",
     emergencyContactNo: "018XXXXXXXX",
     presentAddress: "Dhaka, Bangladesh",
     permanentAddress: "Rajshahi, Bangladesh",
@@ -99,8 +122,8 @@ const CreateStudent = () => {
       address: "Chittagong, Bangladesh",
     },
 
-    admissionSemester: "695342247b40850db4b39ae5",
-    academicDepartment: "6953416c7b40850db4b39add",
+    // admissionSemester: "695342247b40850db4b39ae5",
+    // academicDepartment: "6953416c7b40850db4b39add",
   };
 
   return (
@@ -244,14 +267,19 @@ const CreateStudent = () => {
             <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
               <PHSelect
                 options={semesterOptions}
-                disable={sIsLoading}
+                disabled={sIsLoading}
                 name="admissionSemester"
                 label="Admission Semester"
               />
             </Col>
-            {/* <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
-              <PHSelect name="academicDepartment" label="Academic Department" />
-            </Col> */}
+            <Col span={24} md={{ span: 12 }} lg={{ span: 8 }}>
+              <PHSelect
+                options={departmentOptions}
+                disabled={dIsLoading}
+                name="academicDepartment"
+                label="Academic Department"
+              />
+            </Col>
           </Row>
 
           <Button htmlType="submit">Submit</Button>
