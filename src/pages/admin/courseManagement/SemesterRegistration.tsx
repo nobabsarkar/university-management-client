@@ -36,8 +36,8 @@ const SemesterRegistration = () => {
       const res = (await addSemester(semesterData)) as TResponse<any>;
       console.log(res);
 
-      if (res.error) {
-        toast.error(res.error.data.message, {
+      if (res?.error) {
+        toast.error(res?.error?.data?.message, {
           id: toastId,
         });
       } else {
@@ -58,7 +58,7 @@ const SemesterRegistration = () => {
         <PHForm onSubmit={onSubmit}>
           <PHSelect
             label="Academic Semester"
-            name="academic semester"
+            name="academicSemester"
             options={academicSemesterOptions}
           />
 
