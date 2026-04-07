@@ -11,11 +11,8 @@ export type TTableData = Pick<
 const RegisteredSemesters = () => {
   //   const [params, setParams] = useState<TQueryParam[] | undefined>([]);
 
-  const {
-    data: semesterData,
-    isLoading,
-    isFetching,
-  } = useGetAllRegisteredSemestersQuery(undefined);
+  const { data: semesterData, isFetching } =
+    useGetAllRegisteredSemestersQuery(undefined);
 
   const tableData = semesterData?.data?.map(
     ({ _id, academicSemester, startDate, endDate, status }) => ({
