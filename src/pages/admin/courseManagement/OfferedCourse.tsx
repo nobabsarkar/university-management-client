@@ -1,7 +1,7 @@
 const OfferedCourse = () => {
   return (
     <div>
-      <h1>This is Offered Course Component</h1>
+      <h1>This is Offered Course Components</h1>
     </div>
   );
 };

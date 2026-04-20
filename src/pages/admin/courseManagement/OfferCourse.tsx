@@ -10,6 +10,7 @@ import { useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 import PHSelect from "../../../components/form/PHSelect";
 import {
+  useCreateOfferedCourseMutation,
   useGetAllCoursesQuery,
   useGetAllRegisteredSemestersQuery,
   useGetCourseFacultiesQuery,
@@ -17,9 +18,12 @@ import {
 import PHInput from "../../../components/form/PHInput";
 import PHTimePicker from "../../../components/form/PHTimePicker";
 import { weekDaysOptions } from "../../../constants/global";
+import moment from "moment";
 
 const OfferCourse = () => {
   const [courseId, setCourseId] = useState("");
+
+  const [addOfferedCourse] = useCreateOfferedCourseMutation();
 
   const { data: semesterRegistrationData } = useGetAllRegisteredSemestersQuery([
     { name: "sort", value: "year" },
@@ -60,8 +64,17 @@ const OfferCourse = () => {
     label: item?.fullName,
   }));
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const offeredCourseData = {
+      ...data,
+      maxCapacity: Number(data.maxCapacity),
+      section: Number(data.section),
+      startTime: moment(new Date(data.startTime)).format("HH:mm"),
+      endTime: moment(new Date(data.endTime)).format("HH:mm"),
+    };
+
+    const res = await addOfferedCourse(offeredCourseData);
+    console.log(res);
   };
 
   return (
