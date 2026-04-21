@@ -1,10 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Col, Row } from "antd";
-import { useGetAllOfferedCoursesQuery } from "../../redux/features/student/studentCourseManagement.api";
+import {
+  useEnrolCourseMutation,
+  useGetAllOfferedCoursesQuery,
+} from "../../redux/features/student/studentCourseManagement.api";
+import { toast } from "sonner";
+
+type TCourse = {
+  [index: string]: any;
+};
 
 const OfferedCourse = () => {
   const { data: offeredCourseData } = useGetAllOfferedCoursesQuery(undefined);
+  const [enroll] = useEnrolCourseMutation();
 
-  const singleObject = offeredCourseData?.data?.reduce((acc, item) => {
+  // const toastId = toast.loading("Creating...");
+
+  const singleObject = offeredCourseData?.data?.reduce((acc: TCourse, item) => {
     const key = item?.course?.title;
 
     acc[key] = acc[key] || { courseTitle: key, sections: [] };
@@ -20,7 +32,24 @@ const OfferedCourse = () => {
   }, {});
 
   const modifiedData = Object.values(singleObject ? singleObject : {});
-  console.log(modifiedData);
+
+  const handleEnroll = async (id) => {
+    const enrollData = {
+      offeredCourse: id,
+    };
+
+    const res = await enroll(enrollData);
+    console.log(res);
+    if (res?.data?.success) {
+      toast.success("Enrolled SuccessFully");
+    }
+  };
+
+  if (!modifiedData.length) {
+    return (
+      <p style={{ color: "red", fontSize: "20px" }}>No Available courses</p>
+    );
+  }
 
   return (
     <Row gutter={[0, 20]}>
@@ -31,7 +60,7 @@ const OfferedCourse = () => {
             style={{ border: "solid #d4d4d4 2px", padding: "10px" }}
           >
             <div style={{ padding: "10px" }}>
-              <h2>{item.courseTitle}</h2>
+              <h2>{item?.courseTitle}</h2>
             </div>
             <div>
               {item?.sections?.map((section) => {
@@ -43,14 +72,16 @@ const OfferedCourse = () => {
                   >
                     <Col span={5}>Section:{section?.section}</Col>
                     <Col span={5}>
-                      days:{" "}
-                      {section.days.map((day) => (
+                      Days:{" "}
+                      {section.days.map((day: any) => (
                         <span> {day} </span>
                       ))}
                     </Col>
                     <Col span={5}>StartTime:{section?.startTime}</Col>
                     <Col span={5}>EndTime:{section?.endTime}</Col>
-                    <Button>Enroll</Button>
+                    <Button onClick={() => handleEnroll(section?._id)}>
+                      Enroll
+                    </Button>
                   </Row>
                 );
               })}

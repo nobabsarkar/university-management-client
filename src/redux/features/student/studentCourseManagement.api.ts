@@ -21,8 +21,8 @@ const studentCourseApi = baseApi.injectEndpoints({
           params: params,
         };
       },
-
-      transformResponse: (response: TResponseRedux<TOfferedCourse>) => {
+      providesTags: ["offeredCourse"],
+      transformResponse: (response: TResponseRedux<TOfferedCourse[]>) => {
         return {
           data: response?.data,
           meta: response?.meta,
@@ -64,13 +64,13 @@ const studentCourseApi = baseApi.injectEndpoints({
       invalidatesTags: ["offeredCourse"],
     }),
 
-    // addStudent: builder.mutation({
-    //   query: (data) => ({
-    //     url: "/users/create-student",
-    //     method: "POST",
-    //     body: data,
-    //   }),
-    // }),
+    addStudent: builder.mutation({
+      query: (data) => ({
+        url: "/users/create-student",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
