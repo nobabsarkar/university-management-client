@@ -33,7 +33,7 @@ const OfferedCourse = () => {
 
   const modifiedData = Object.values(singleObject ? singleObject : {});
 
-  const handleEnroll = async (id) => {
+  const handleEnroll = async (id: any) => {
     const enrollData = {
       offeredCourse: id,
     };
@@ -63,7 +63,7 @@ const OfferedCourse = () => {
               <h2>{item?.courseTitle}</h2>
             </div>
             <div>
-              {item?.sections?.map((section) => {
+              {item?.sections?.map((section: any) => {
                 return (
                   <Row
                     justify="space-between"
