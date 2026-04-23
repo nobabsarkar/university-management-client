@@ -41,6 +41,7 @@ const studentCourseApi = baseApi.injectEndpoints({
           });
         }
         return {
+          // url: "/enrolled-courses/my-enrolled-courses",
           url: "/enrolled-courses/my-enrolled-courses",
           method: "GET",
           params: params,

@@ -7,15 +7,13 @@ const MyStudent = () => {
 
   const { data: facultyCoursesData } = useGetAllFacultyCoursesQuery([
     { name: "semesterRegistration", value: registerSemesterId },
-    { name: "courseId", value: courseId },
+    { name: "course", value: courseId },
   ]);
-
-  console.log(facultyCoursesData);
 
   const tableData = facultyCoursesData?.data?.map(({ _id, student, role }) => ({
     key: _id,
     name: student.fullName,
-    roll: student.id,
+    role: student.id,
   }));
 
   const columns = [

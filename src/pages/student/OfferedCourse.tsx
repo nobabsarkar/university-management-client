@@ -70,11 +70,11 @@ const OfferedCourse = () => {
                     align="middle"
                     style={{ borderTop: "solid #d4d4d4 2px", padding: "10px" }}
                   >
-                    <Col span={5}>Section:{section?.section}</Col>
+                    <Col span={5}>Section: {section?.section}</Col>
                     <Col span={5}>
                       Days:{" "}
                       {section.days.map((day: any) => (
-                        <span> {day} </span>
+                        <span> {day}, </span>
                       ))}
                     </Col>
                     <Col span={5}>StartTime:{section?.startTime}</Col>
