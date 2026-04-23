@@ -1,6 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useParams } from "react-router-dom";
-import { useGetAllFacultyCoursesQuery } from "../../redux/features/faculty/facultyCourses.api";
-import { Button, Table } from "antd";
+import {
+  useAddMarkMutation,
+  useGetAllFacultyCoursesQuery,
+} from "../../redux/features/faculty/facultyCourses.api";
+import { Button, Modal, Table } from "antd";
+import { useState } from "react";
+import PHForm from "../../components/form/PHForm";
+import PHInput from "../../components/form/PHInput";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 
 const MyStudent = () => {
   const { registerSemesterId, courseId } = useParams();
@@ -10,68 +18,36 @@ const MyStudent = () => {
     { name: "course", value: courseId },
   ]);
 
-  const tableData = facultyCoursesData?.data?.map(({ _id, student, role }) => ({
-    key: _id,
-    name: student.fullName,
-    role: student.id,
-  }));
+  const tableData = facultyCoursesData?.data?.map(
+    ({ _id, student, semesterRegistration, offeredCourse }: any) => ({
+      key: _id,
+      name: student.fullName,
+      roll: student.id,
+      semesterRegistration: semesterRegistration._id,
+      student: student._id,
+      offeredCourse: offeredCourse._id,
+    }),
+  );
 
   const columns = [
     {
       title: "Name",
       key: "name",
       dataIndex: "name",
-      filters: [
-        {
-          text: "Autumn",
-          value: "Autumn",
-        },
-        {
-          text: "Fall",
-          value: "Fall",
-        },
-        {
-          text: "Summer",
-          value: "Summer",
-        },
-      ],
     },
     {
-      title: "Year",
-      key: "year",
-      dataIndex: "year",
-      filters: [
-        {
-          text: "2026",
-          value: "2026",
-        },
-        {
-          text: "2027",
-          value: "2027",
-        },
-        {
-          text: "2028",
-          value: "2028",
-        },
-      ],
+      title: "Roll",
+      key: "roll",
+      dataIndex: "roll",
     },
-    {
-      title: "Start Month",
-      key: "startMonth",
-      dataIndex: "startMonth",
-    },
-    {
-      title: "End Month",
-      key: "endMonth",
-      dataIndex: "endMonth",
-    },
+
     {
       title: "Action",
       key: "x",
-      render: () => {
+      render: (item: any) => {
         return (
           <div>
-            <Button>Update</Button>
+            <AddMarksModal studentInfo={item} />
           </div>
         );
       },
@@ -82,3 +58,55 @@ const MyStudent = () => {
 };
 
 export default MyStudent;
+
+const AddMarksModal = ({ studentInfo }: any) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [addMark] = useAddMarkMutation();
+
+  const handleSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const studentMark = {
+      semesterRegistration: studentInfo.semesterRegistration,
+      offeredCourse: studentInfo.offeredCourse,
+      student: studentInfo.student,
+      courseMarks: {
+        classTest1: Number(data.classTest1),
+        classTest2: Number(data.classTest2),
+        midTerm: Number(data.midTerm),
+        finalTerm: Number(data.finalTerm),
+      },
+      // courseMarks: {
+      //   data,
+      // },
+    };
+    const res = await addMark(studentMark);
+    console.log(res);
+  };
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <Button onClick={showModal}>Add Faculty</Button>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <PHForm onSubmit={handleSubmit}>
+          <PHInput type="text" name="classTest1" label="Class Test 1" />
+          <PHInput type="text" name="classTest2" label="Class Test 2" />
+          <PHInput type="text" name="midTerm" label="Mid Term" />
+          <PHInput type="text" name="finalTerm" label="Final" />
+          <Button htmlType="submit">Submit</Button>
+        </PHForm>
+      </Modal>
+    </>
+  );
+};
