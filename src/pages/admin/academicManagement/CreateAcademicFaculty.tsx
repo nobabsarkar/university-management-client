@@ -1,8 +1,32 @@
+import { Button, Col, Row } from "antd";
+import PHForm from "../../../components/form/PHForm";
+import PHInput from "../../../components/form/PHInput";
+import { useAddFacultyOfProgrammingMutation } from "../../../redux/features/admin/academicManagement.api";
+import { toast } from "sonner";
+
 const CreateAcademicFaculty = () => {
+  const [facultyOfProgramming] = useAddFacultyOfProgrammingMutation();
+
+  const onSubmit = async (data) => {
+    const res = await facultyOfProgramming(data);
+    if (res?.data?.success) {
+      toast(res?.data?.message);
+    }
+  };
+
   return (
-    <div>
-      <h1>this is Create AcademicFaculty compoent</h1>
-    </div>
+    <Row>
+      <Col>
+        <PHForm onSubmit={onSubmit}>
+          <Row>
+            <Col>
+              <PHInput type="text" name="name" label="Faculty Of Programming" />
+              <Button htmlType="submit">Submit</Button>
+            </Col>
+          </Row>
+        </PHForm>
+      </Col>
+    </Row>
   );
 };
 
