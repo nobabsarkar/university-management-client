@@ -3,11 +3,12 @@ import PHForm from "../../../components/form/PHForm";
 import PHInput from "../../../components/form/PHInput";
 import { useAddFacultyOfProgrammingMutation } from "../../../redux/features/admin/academicManagement.api";
 import { toast } from "sonner";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 
 const CreateAcademicFaculty = () => {
   const [facultyOfProgramming] = useAddFacultyOfProgrammingMutation();
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const res = await facultyOfProgramming(data);
     if (res?.data?.success) {
       toast(res?.data?.message);
